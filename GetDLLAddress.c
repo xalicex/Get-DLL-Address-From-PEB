@@ -6,7 +6,7 @@ void * DLLViaPEB(wchar_t * DllNameToSearch){
 
     PPEB pPeb = 0;
 	PLDR_DATA_TABLE_ENTRY pDataTableEntry = 0;
-    PVOID ntdllAddress = 0;
+    PVOID DLLAddress = 0;
 
 	//Retrieve from the TEB (Thread Environment Block) the PEB (Process Environment Block) address
     #ifdef _M_X64
@@ -49,15 +49,15 @@ void * DLLViaPEB(wchar_t * DllNameToSearch){
         // We check if the full DLL name is the one we are searching
         // If yes, return  the dll base address
         if(wcsstr(FullDLLName, DllNameToSearch) != NULL){
-            ntdllAddress = (PVOID)pDataTableEntry->DllBase;
-            return ntdllAddress;
+            DLLAddress = (PVOID)pDataTableEntry->DllBase;
+            return DLLAddress;
         }
 
 		// Now, We need to go at the original position (InMemoryOrderModuleList), to be able to retrieve the next Node with ->Flink
 		Node = Node + 1;
 	}
 
-    return ntdllAddress;
+    return DLLAddress;
 }
 void main()
 {
