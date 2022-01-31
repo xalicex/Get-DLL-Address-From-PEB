@@ -26,7 +26,7 @@ void * DLLViaPEB(wchar_t * DllNameToSearch){
 	//Address of the First Module which is always (I think) the current program;
 	PLIST_ENTRY AddressFirstNode = AddressFirstPLIST->Flink;
 
-    //Searching through all module NTDLL
+    //Searching through all module the DLL we want
 	for (PLIST_ENTRY Node = AddressFirstNode; Node != AddressFirstPLIST ;Node = Node->Flink) // Node = Node->Flink means we go the next Node !
 	{
 		// Node is pointing to InMemoryOrderModuleList in the LDR_DATA_TABLE_ENTRY structure.
