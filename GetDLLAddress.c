@@ -21,7 +21,7 @@ void * DLLViaPEB(wchar_t * DllNameToSearch){
 	PPEB_LDR_DATA pLdr = pPEB->Ldr;
 
 	//Address of the First PLIST_ENTRY Structure
-    PLIST_ENTRY AddressFirstPLIST = &pLdr->InMemoryOrderModuleList;
+    	PLIST_ENTRY AddressFirstPLIST = &pLdr->InMemoryOrderModuleList;
 
 	//Address of the First Module which is always (I think) the current program;
 	PLIST_ENTRY AddressFirstNode = AddressFirstPLIST->Flink;
@@ -30,35 +30,36 @@ void * DLLViaPEB(wchar_t * DllNameToSearch){
 	for (PLIST_ENTRY Node = AddressFirstNode; Node != AddressFirstPLIST ;Node = Node->Flink) // Node = Node->Flink means we go the next Node !
 	{
 		// Node is pointing to InMemoryOrderModuleList in the LDR_DATA_TABLE_ENTRY structure.
-        // InMemoryOrderModuleList is at the second position in this structure.
+        	// InMemoryOrderModuleList is at the second position in this structure.
 		// To cast in the proper type, we need to go at the start of the structure.
-        // To do so, we need to subtract 1 byte. Indeed, InMemoryOrderModuleList is at 0x008 from the start of the structure) 
+        	// To do so, we need to subtract 1 byte. Indeed, InMemoryOrderModuleList is at 0x008 from the start of the structure) 
 		Node = Node - 1;
 
-        // DataTableEntry structure
+        	// DataTableEntry structure
 		pDataTableEntry = (PLDR_DATA_TABLE_ENTRY)Node;
 
-        // Retrieve de full DLL Name from the DataTableEntry
-        wchar_t * FullDLLName = (wchar_t *)pDataTableEntry->FullDllName.Buffer;
+        	// Retrieve de full DLL Name from the DataTableEntry
+        	wchar_t * FullDLLName = (wchar_t *)pDataTableEntry->FullDllName.Buffer;
 
-        //We lower the full DLL name for comparaison purpose
-        for(int size = wcslen(FullDLLName), cpt = 0; cpt < size ; cpt++){
-            FullDLLName[cpt] = tolower(FullDLLName[cpt]);
-        }
+        	//We lower the full DLL name for comparaison purpose
+        	for(int size = wcslen(FullDLLName), cpt = 0; cpt < size ; cpt++){
+            		FullDLLName[cpt] = tolower(FullDLLName[cpt]);
+        	}
 
-        // We check if the full DLL name is the one we are searching
-        // If yes, return  the dll base address
-        if(wcsstr(FullDLLName, DllNameToSearch) != NULL){
-            DLLAddress = (PVOID)pDataTableEntry->DllBase;
-            return DLLAddress;
-        }
+        	// We check if the full DLL name is the one we are searching
+        	// If yes, return  the dll base address
+        	if(wcsstr(FullDLLName, DllNameToSearch) != NULL){
+            		DLLAddress = (PVOID)pDataTableEntry->DllBase;
+            		return DLLAddress;
+        	}
 
 		// Now, We need to go at the original position (InMemoryOrderModuleList), to be able to retrieve the next Node with ->Flink
 		Node = Node + 1;
 	}
 
-    return DLLAddress;
+    	return DLLAddress;
 }
+
 void main()
 {
     wchar_t * DllNameToSearch = L"ntdll";
